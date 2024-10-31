@@ -1,5 +1,5 @@
 
- adminauth = require = (req , res , next)=> 
+const adminauth = (req , res , next)=> 
     { const token = "xyz";
     const isauthenticated = token ==="xyz";
 

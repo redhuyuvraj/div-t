@@ -1,38 +1,41 @@
-// Import the Express module
+
 const express = require('express');
 
-// Initialize the Express app
+const connectdb = require("./confi/database");
+
 const app = express();
 
-// Define a port
-const PORT = 3000;
+app.use (express.json());
 
-// Middleware to log each request
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
+const User = require("./model/user");
+
+
+app.post("/signup" , async (req , res ) => {
+    const user = new User({
+        firstName : "Yuvraj",
+        lastName : "Redhu",
+        email : "redhuyuvraj",
+        password : "mypassword",
+        age : "20",
+    });
+
+    await user.save();
+    res.send("user added successfully")
 });
 
-// Route for the home page
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+connectdb()
+    .then(() =>{
+        console.log("database connected successfully");
 
-// Route for an about page
-app.get('/about', (req, res) => {
-  res.send('This is the About page!');
-});
+        // Start the server
+        app.listen(3222, () => {
+          console.log("hii i a, running ");
+        });
+    })
 
-app.get('/yuraj', (req, res) => {
-    res.send('this side !');
-  });
 
-// Route to handle 404 errors (not found)
-app.use((req, res) => {
-  res.status(404).send('404: Page Not Found');
-});
+    .catch((err) =>{
+        console.error("database is not connectd");
+    });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+
