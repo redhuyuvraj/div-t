@@ -62,6 +62,25 @@ app.get("/find" , async (req , res) =>{
 })
 
 
+app.patch("/user" , async (req, res)=>{
+    const userId = req.body.userId;
+    const data = req.body;
+    console.log(data);
+
+    try{
+      const updatedUser = await User.findByIdAndUpdate(userId , data );
+      if (!updatedUser) {
+        return res.status(404).send("User not found");
+    }
+       res.send("data is updated ");
+    }
+    catch(err){
+      res.status(400).send("something went wrong");
+    }
+
+})
+
+
 
 app.delete("/user" , async (req , res)=>{
   const userId = req.body.userId;
