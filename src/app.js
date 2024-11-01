@@ -9,7 +9,7 @@ app.use (express.json());
 
 const User = require("./model/user");
 
-app.use(express.json());
+// app.use(express.json());
 
 app.post("/signup" , async (req , res ) => {
 
@@ -18,6 +18,48 @@ app.post("/signup" , async (req , res ) => {
         await user.save();
         res.send("user added successfully")
 });
+
+// To find the user using email
+app.get("/user" , async (req , res) => {
+
+    const userenmail = req.body.email;
+    try{   
+      const user= await User.find({email : userenmail});
+      if(user.length === 0){
+        res.send("user not found");
+      }else{
+        res.send(user);}
+     }
+     catch{
+        res.status(400).send("something went wrong");
+     }
+})
+
+//To find all the users using email
+app.get("/feed" , async (req , res) => {
+
+    const userenmail = req.body.email;
+    try{   
+      const feed = await User.find({});
+        res.send(feed);}
+     
+     catch{
+        res.status(400).send("something went wrong");
+     }
+})
+
+
+// to find one user
+app.get("/find" , async (req , res) =>{
+    const userenmail = req.body.email;
+    try{
+        const find = await User.findOne({email : userenmail});
+        res.send(find);
+    }
+    catch{
+      res.status(400).send("something went wrong");
+    }
+})
 
 connectdb()
     .then(() =>{
