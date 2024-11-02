@@ -12,11 +12,17 @@ const User = require("./model/user");
 // app.use(express.json());
 
 app.post("/signup" , async (req , res ) => {
-
-    const user  = new User(req.body);
+try{
+        const user  = new User(req.body);
     
         await user.save();
-        res.send("user added successfully")
+        res.send("user added successfully")}
+
+        catch (error) {
+          
+          res.status(500).send("An unexpected error occurred");
+          }
+      
 });
 
 // To find the user using email

@@ -2,25 +2,56 @@ const mongoose = require("mongoose")
 
 const userSchema = mongoose.Schema ({
      firstName: {
-        type: String
+        type: String,
+        required : true,
+        minLength:2,
+        maxLength:8
     },
 
     lastName: {
-        type: String
+        type: String,
+        minLength:2,
+        maxLength:8
     },
    email:{
-        type:String
+        type:String,
+        required : true,
+        unique : true,
+        trim :true,
+        lowercase: true
+
     },
 
-    password:{
-        type:String
+    about:{
+        type:String,
+        default: "This is the description for me "
     },
 
     age:{
-        type: Number
+        type: Number,
+        min:16
+    },
+
+    photo:{
+        type: String,
+        default:"https://www.pinterest.com/pin/default-pfp--810436895442077324/"
+    },
+    gender: {
+        type: String,
+        required :true,
+        enum:["male" , "female" , "other"]
+    },
+
+    skill:{
+        type:  [""],
+        required : true
+    } ,
+},
+    {
+        timestamps: true,
     }
 
-})
+)
 
 
 const User = mongoose.model('User', userSchema);
