@@ -71,9 +71,15 @@ app.get("/find" , async (req , res) =>{
 app.patch("/user" , async (req, res)=>{
     const userId = req.body.userId;
     const data = req.body;
-    console.log(data);
+
 
     try{
+      const ALLOWED_UPDATES = ["gender" , "skill" , "photo" , "about"];
+      const isUpdateAllowed = Object.keys(data).every(k) = ALLOWED_UPDATES.includes(k);
+
+      if(!isUpdateAllowed){
+        throw new Error("update is not allowed ");
+      }
       const updatedUser = await User.findByIdAndUpdate(userId , data );
       if (!updatedUser) {
         return res.status(404).send("User not found");
