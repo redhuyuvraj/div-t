@@ -68,8 +68,8 @@ app.get("/find" , async (req , res) =>{
 })
 
 
-app.patch("/user" , async (req, res)=>{
-    const userId = req.body.userId;
+app.patch("/user/userId" , async (req, res)=>{
+    const userId = req.params?.userId;
     const data = req.body;
 
 
@@ -80,10 +80,16 @@ app.patch("/user" , async (req, res)=>{
       if(!isUpdateAllowed){
         throw new Error("update is not allowed ");
       }
+
+      if(data?.skills.length > 40){
+        throw new Error(" Sorry! Can't add more skills");
+      }
+
       const updatedUser = await User.findByIdAndUpdate(userId , data );
       if (!updatedUser) {
         return res.status(404).send("User not found");
     }
+
        res.send("data is updated ");
     }
     catch(err){
