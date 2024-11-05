@@ -9,17 +9,18 @@ app.use (express.json());
 
 const User = require("./model/user");
 
-// app.use(express.json());
+app.use(express.json());
 
 app.post("/signup" , async (req , res ) => {
 try{
+        console.log(req.body);
         const user  = new User(req.body);
     
         await user.save();
         res.send("user added successfully")}
 
         catch (error) {
-          
+          console.error(error);
           res.status(500).send("An unexpected error occurred");
           }
       
@@ -28,28 +29,31 @@ try{
 // To find the user using email
 app.get("/user" , async (req , res) => {
 
-    const userenmail = req.body.email;
+    const userenmail = req.query.email;
     try{   
       const user= await User.find({email : userenmail});
       if(user.length === 0){
-        res.send("user not found");
+        res.status(404).send("user not found");
       }else{
-        res.send(user);}
+        res.json(user);}
      }
-     catch{
-        res.status(400).send("something went wrong");
+    
+     catch(error) {
+      console.error(error);
+      res.status(400).send("something went wrong");
      }
-})
+});
 
 //To find all the users using email
 app.get("/feed" , async (req , res) => {
 
-    const userenmail = req.body.email;
+    const useremail = req.query.email;
     try{   
       const feed = await User.find({});
-        res.send(feed);}
+        res.status(200).json(feed);
+      }
      
-     catch{
+     catch(error){
         res.status(400).send("something went wrong");
      }
 })
@@ -57,10 +61,13 @@ app.get("/feed" , async (req , res) => {
 
 // to find one user
 app.get("/find" , async (req , res) =>{
-    const userenmail = req.body.email;
+    const useremail = req.body.email;
     try{
-        const find = await User.findOne({email : userenmail});
-        res.send(find);
+        const find = await User.findOne({email : useremail});
+        if(!find){
+          returnres.send(404).send("user not found");
+        }
+        res.status(200).json(find);
     }
     catch{
       res.status(400).send("something went wrong");
@@ -68,24 +75,24 @@ app.get("/find" , async (req , res) =>{
 })
 
 
-app.patch("/user/userId" , async (req, res)=>{
-    const userId = req.params?.userId;
+app.patch("/user/:userId" , async (req, res)=>{
+    const userId = req.params.userId;
     const data = req.body;
 
 
     try{
       const ALLOWED_UPDATES = ["gender" , "skill" , "photo" , "about"];
-      const isUpdateAllowed = Object.keys(data).every(k) = ALLOWED_UPDATES.includes(k);
+      const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
 
       if(!isUpdateAllowed){
         throw new Error("update is not allowed ");
       }
 
-      if(data?.skills.length > 40){
+      if( data.skills && data.skills.length > 40){
         throw new Error(" Sorry! Can't add more skills");
       }
 
-      const updatedUser = await User.findByIdAndUpdate(userId , data );
+      const updatedUser = await User.findByIdAndUpdate(userId , data , {new:true} );
       if (!updatedUser) {
         return res.status(404).send("User not found");
     }
