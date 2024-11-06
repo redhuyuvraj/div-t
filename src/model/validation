@@ -1,0 +1,24 @@
+const validator = require('validator')
+
+const validateSignUpData = req => {
+    const{firstName , lastName ,  email , Password } =req.body;
+
+
+    if (!password || typeof password !== 'string') {
+        throw new Error("Password is required and must be a string");
+      }
+    else if (!email || !validator.isEmail(email)) {
+        throw new Error("Valid email is required");
+      }
+    else if (!validator.isStrongPassword(Password)){
+        throw new Error("You  enter a weak password ");
+    }
+    else if (!firstName || !lastName) {
+        throw new Error("First and Last names are required");
+    }
+
+} 
+
+module.exports = {
+    validateSignUpData,
+};

@@ -54,7 +54,7 @@ const userSchema = mongoose.Schema ({
         required :true,
         enum:["male" , "female" , "other"]
     },
-    Password: {
+    password: {
         type: String,
         required :true,
         validate(value){

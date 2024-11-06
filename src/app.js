@@ -5,16 +5,38 @@ const connectdb = require("./confi/database");
 
 const app = express();
 
-app.use (express.json());
+app.use(express.json()); 
 
 const User = require("./model/user");
 
-app.use(express.json());
+
+const { validateSignUpData } = require("./model/validation");
+
+const bcrypt = require('bcrypt');
+
+
 
 app.post("/signup" , async (req , res ) => {
 try{
-        console.log(req.body);
-        const user  = new User(req.body);
+
+  // validation of data 
+  
+  console.log(req.body);
+  const { firstName , lastName ,email ,password} = req.body;
+  
+  if (!password) {
+    return res.status(400).send("Password is required");
+  }
+  
+    validateSignUpData(firstName, lastName, email, password);
+        const passwordHash = await bcrypt.hash(password , 10);
+
+        const user  = new User({
+          firstName,
+          lastName,
+          email,
+          password: passwordHash, 
+        });
     
         await user.save();
         res.send("user added successfully")}
@@ -65,7 +87,7 @@ app.get("/find" , async (req , res) =>{
     try{
         const find = await User.findOne({email : useremail});
         if(!find){
-          returnres.send(404).send("user not found");
+          res.status(404).send("user not found");
         }
         res.status(200).json(find);
     }
@@ -123,14 +145,14 @@ connectdb()
         console.log("database connected successfully");
 
         // Start the server
-        app.listen(3222, () => {
+        app.listen(4000, () => {
           console.log("hii i a, running ");
         });
     })
 
 
     .catch((err) =>{
-        console.error("database is not connectd");
+        console.error("database is not connected");
     });
 
 
