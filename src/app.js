@@ -21,21 +21,25 @@ try{
 
   // validation of data 
   
-  console.log(req.body);
-  const { firstName , lastName ,email ,password} = req.body;
+  // console.log(req.body);
+  // const { firstName , lastName ,email ,password} = req.body;
   
+  
+  validateSignUpData(req);
+  
+  const {firstName , lastName , email , password , gender} = req.body;
   if (!password) {
     return res.status(400).send("Password is required");
   }
-  
-    validateSignUpData(firstName, lastName, email, password);
-        const passwordHash = await bcrypt.hash(password , 10);
+  const passwordHash = await bcrypt.hash(password , 10);
+  console.log(passwordHash);
 
         const user  = new User({
           firstName,
           lastName,
           email,
           password: passwordHash, 
+          gender,
         });
     
         await user.save();
