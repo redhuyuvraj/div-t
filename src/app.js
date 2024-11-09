@@ -52,6 +52,33 @@ try{
       
 });
 
+
+app.get("/login" , async (req , res) =>{
+        try{
+          const{email , password} = req.body;
+          const user = await User.findOne({  email});
+          
+          if(!user){
+            throw new error ("Invalid Data");
+          }
+          const isPasswordValid = await bcrypt.compare (password , user.password);
+
+          if(isPasswordValid){
+            res.send("Login Successfully ");
+          }
+          else{
+            throw new error("Invalid Data");
+          }
+
+        }
+        catch(error){
+          console.error(error);
+          res.status(404).send("Error" + error.message);
+        }
+
+})
+
+
 // To find the user using email
 app.get("/user" , async (req , res) => {
 
