@@ -69,14 +69,15 @@ app.get("/login" , async (req , res) =>{
           if(!user){
             throw new error ("Invalid Data");
           }
-          const isPasswordValid = await bcrypt.compare (password , user.password);
+          const isPasswordValid = await user.validatePassword (password );
 
           if(isPasswordValid){
             //create a JWT token 
 
-            const token = await jwt.sign({_id : user.id} , "DEV@tinder$123");
+            const token = await user.getJWT();
+
             // res.cookie("token", token, { httpOnly: true });
-            // console.log(token)
+          
 
           //add the token to the cookie and send the res back
           res.cookie("token" , token);
@@ -114,11 +115,11 @@ app.get("/profile" , userAuth ,  async(req, res) =>{
 
 
 
-// app.post("/sendConnectionRequest" , userAuth , async(req , res) =>{
-//   const user = req.user;
-//   console.log("sending the connection request");
-//   res.send(user.firstName + " is sending the connection request");
-// })
+app.post("/sendConnectionRequest" , userAuth , async(req , res) =>{
+  const user = req.user;
+  console.log("sending the connection request");
+  res.send(user.firstName + " is sending the connection request");
+})
 
 
 connectdb()
