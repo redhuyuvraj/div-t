@@ -1,30 +1,38 @@
 
-const adminauth = (req , res , next)=> 
-    { const token = "xyz";
-    const isauthenticated = token ==="xyz";
+const jwt = require("jsonwebtoken");
 
-    if (isauthenticated){
-        res.send("data is send");
-    }
-    else{
-        res.send(401).send("unknown user");
-    }
+const User = require("../model/user");
+
+
+const userAuth = async(req , res , next)=> {
+   try { 
+        // read the token from the requested cookie
+        const cookies = req.cookies;
+     //    check the token
+          const {token } = cookies;
+          if(!token){
+            throw new Error("Token is not valid");
+          }
+//    verify the token 
+          const decodedObj =   await jwt.verify(token , "DEV@tinder$123");
+          
+          const { _id} = decodedObj;
+// verify the user
+          const user  = await User.findById(_id);
+          if(!user){
+            throw new Error("User not found");
+          }
+          res.send(user);
+          next();
+
+  }
+catch (err){
+    res.status(400).send("ERROR" + err.message);
 }
-
-userauth = require = (req , res , next)=> 
-    { const token = "xyz";
-    const isauthenticated = token ==="xyz";
-
-    if (isauthenticated){
-        res.send("data is send");
-    }
-    else{
-        res.send(401).send("unknown user");
-    }
-}
+};
 
 module.exports = {
-    adminauth,userauth,
+    userAuth
 }
 
 
